@@ -1,0 +1,4 @@
+function fmt(s:number){if(!Number.isFinite(s))return"0:00";return `${Math.floor(s/60)}:${Math.floor(s%60).toString().padStart(2,"0")}`}
+export function AudioPlayer({playing,currentTime,duration,onPlay,onPause,onSeek}:{playing:boolean;currentTime:number;duration:number;onPlay:()=>void;onPause:()=>void;onSeek:(v:number)=>void}){
+ return <div className="rounded-2xl border border-white/10 bg-white/[.03] p-3"><div className="flex items-center gap-3"><button onClick={playing?onPause:onPlay} className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-black">{playing?"Ⅱ":"▶"}</button><input className="min-w-0 flex-1" type="range" min="0" max={Math.max(duration,.01)} step=".01" value={Math.min(currentTime,duration||0)} onChange={e=>onSeek(Number(e.target.value))}/><span className="w-24 text-right text-xs tabular-nums text-white/50">{fmt(currentTime)} / {fmt(duration)}</span></div></div>
+}

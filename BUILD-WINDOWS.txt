@@ -1,0 +1,3 @@
+Portable Windows build: npm install && npm run dist:win
+Output: release/LoopVisualizer-1.0.0-portable.exe
+This source archive is not itself a compiled EXE. See README.md for the GitHub Actions route.
