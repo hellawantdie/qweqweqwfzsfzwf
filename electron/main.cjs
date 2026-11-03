@@ -1,3 +1,4 @@
+
 const { app, BrowserWindow, shell } = require("electron");
 const path = require("node:path");
 
@@ -13,15 +14,29 @@ function createWindow() {
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: true
+      sandbox: false
     }
   });
 
-  if (app.isPackaged) {
-    win.loadFile(path.join(__dirname, "..", "dist", "index.html"));
-  } else {
-    win.loadURL("http://127.0.0.1:5173");
-  }
+  win.webContents.openDevTools({ mode: "detach" });
+
+  win.webContents.on("did-fail-load", (event, code, description, url) => {
+    console.error("LOAD ERROR:", code, description, url);
+  });
+
+  win.webContents.on("render-process-gone", (event, details) => {
+    console.error("RENDERER CRASH:", details);
+  });
+
+  win.webContents.on("console-message", (event, level, message) => {
+    console.log("APP:", message);
+  });
+
+  const pagePath = path.join(__dirname, "..", "dist", "index.html");
+
+  win.loadFile(pagePath).catch(error => {
+    console.error("FILE LOAD ERROR:", error);
+  });
 
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith("https://") || url.startsWith("http://")) {
@@ -33,6 +48,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
+
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
